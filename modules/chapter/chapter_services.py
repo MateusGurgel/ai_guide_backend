@@ -9,6 +9,10 @@ class ChapterService:
     @staticmethod
     def get_all_chapters(book: Book) -> List[Chapter]:
         book_data = requests.get(book.link).json()
+
+        if not book_data.get("chapter_list"):
+            return []
+        
         chapter_data = requests.get(book_data["chapter_list"]).json()
 
         chapters : List[Chapter] = []
