@@ -12,10 +12,22 @@ class StudyPlanWritter:
 
     def __init__(self, openai_client: OpenAI) -> None:
         self.openai_client = openai_client
+        
+        self.prompt =  "Você é um professor especializado nos topicos descritos pelo aluno"
+        self.prompt += "Monte uma trilha de estudo com livros da biblioteca o'reilly com base na necessidade do usuário"
+        self.prompt += "Requisitos:"
+        self.prompt += "Indique apenas os capitulos que o aluno precisa estudar"
+        self.prompt += "Seja o mais detalista possível"
+        self.prompt += "Descreva o tempo que cada capitulo levará para ser estudado em minutos"
+        self.prompt += "Adicione livros de pré requisitos para o tema estudado, por exemplo, se o aluno precisa saber de machine learning para entender o conteúdo, adicione algebra linear como pré requisito"
+        self.prompt += "Responda em markdown estruturado"
+        self.prompt += "Separe tudo em bullet points"
+        self.prompt += "Responda em (PT-BR)"
+
         self.messages : List[ChatCompletionMessageParam] = [
             {
                 "role": "system",
-                "content": "Monte uma trilha de estudo com livros da biblioteca o'reilly com base na necessidade do usuário",
+                "content": self.prompt,
             },
         ]
 
@@ -71,7 +83,7 @@ class StudyPlanWritter:
             model="gpt-4o",
             messages=self.messages,
             temperature=1,
-            max_tokens=2048,
+            max_tokens=4048,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0,
@@ -86,7 +98,7 @@ class StudyPlanWritter:
                             "properties": {
                                 "query": {
                                     "type": "string",
-                                    "description": "The name of the book, or topic",
+                                    "description": "The name of the book, or topic to search for",
                                 }
                             },
                             "additionalProperties": False,
