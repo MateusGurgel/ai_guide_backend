@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Aplicação FastAPI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <title>AI Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+
+            const form = document.getElementById('form');
+
+
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+
+                submitButton = document.getElementById('submit-button');
+
+                btnContent = submitButton.innerHTML;
+                submitButton.innerHTML = `
+                    <div class="bg-violet-600 text-white px-4 py-2 rounded-md">
+                        <i class="fa fa-spinner fa-spin"></i> Gerando...
+                    </div>
+                `
+
+                const formData = new FormData(form);
+                const studyTopic = formData.get('study_topic');
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        topic: studyTopic
+                    })
+                })
+
+                const data = await response.json();
+                const responseDiv = document.getElementById('plan');
+
+                responseDiv.innerHTML = `
+					<text class="text-left text-white">${marked.parse(data.response)}</text>
+                `
+
+                responseDiv.className="border border-violet-600 mx-24 p-4 rounded-md"
+
+                submitButton.innerHTML = btnContent;
+            });
+
+        });
+    </script>
+</head>
+
+<body class="bg-black">
+    <div class="flex items-center justify-center min-h-screen flex flex-col gap-12">
+        <div class="text-center flex flex-col gap-5" id="main_div">
+            <h1 class="text-2xl text-white font-bold uppercase">AI GUIDE</h1>
+            <form class="flex flex-col gap-4" id="form">
+                <div class="flex flex-col text-left">
+                    <label class="text-white">O que você quer estudar?</label>
+                    <input class="border border-white bg-black text-white h-7 p-4 rounded-md" name="study_topic"
+                        required></input>
+                </div>
+
+                <div id="submit-button">
+                    <button class="bg-violet-600 text-white px-4 py-2 rounded-md" type="submit">Gerar</button>
+                </div>
+            </form>
+        </div>
+        <h2 class="text-white font-bold uppercase">Planejamento de Estudo</h2>
+        <div id="plan">
+        </div>
+</body>
+
+</html>
