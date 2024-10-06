@@ -8,7 +8,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
-async def main_page(request: Request):
+def main_page(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
@@ -19,3 +19,8 @@ def read_root(request: Item):
     books = StudyPlanServices.get_study_plan(request.topic)
 
     return {"response": books}
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app)
